@@ -14,7 +14,7 @@ type CreateOrderResponse = {
     error?: string;
 };
 
-type VerifyOrderResponse = {
+export type VerifyOrderResponse = {
     result: string;
     order_status?: string;
     order_sig?: string;
@@ -46,6 +46,48 @@ export class AtxpayService {
             });
             if (data.result === 'ok') {
                 return data.order_uuid;
+            } else {
+                Logger.warn(
+                    `AtellixPay error: ${data.error}`,
+                    loggerCtx,
+                );
+                return undefined;
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                Logger.warn(
+                    `Error message: ${error.message}`,
+                    loggerCtx,
+                );
+                return undefined;
+            } else {
+                Logger.warn(
+                    `Unexpected error: ${error}`,
+                    loggerCtx,
+                );
+                return undefined;
+            }
+        }
+        return undefined;
+    }
+
+    async verifyOrder(orderId: string): Promise<VerifyOrderResponse | undefined> {
+        try {
+            const { data } = await axios.post<VerifyOrderResponse>('https://atx2.atellix.net/api/payment_gateway/v1/order/verify', {
+                order_uuid: orderId,
+            }, {
+                auth: { username: 'api', password: this.apiKey },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            });
+            if (data.result === 'ok') {
+                if (data.order_status === 'complete') {
+                    return data;
+                } else {
+                    return undefined;
+                }
             } else {
                 Logger.warn(
                     `AtellixPay error: ${data.error}`,

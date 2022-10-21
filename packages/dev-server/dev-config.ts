@@ -1,4 +1,5 @@
 /* tslint:disable:no-console */
+import { AtxpayPlugin } from '@vendure/payments-plugin/package/atellixpay';
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import { AssetServerPlugin } from '@vendure/asset-server-plugin';
 import { ADMIN_API_PATH, API_PORT, SHOP_API_PATH } from '@vendure/common/lib/shared-constants';
@@ -89,6 +90,9 @@ export const devConfig: VendureConfig = {
         AdminUiPlugin.init({
             route: 'admin',
             port: 5001,
+        }),
+        AtxpayPlugin.init({
+            apiKey: '89f5c2a0babf41fa8abab8744ece7bcf4189509a2fb54ba6ab5ea8c6fa925e9a',
         }),
     ],
 };

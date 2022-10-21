@@ -27,23 +27,26 @@ export class AtxpayResolver {
     @Allow(Permission.Owner)
     async verifyAtellixPayOrder(@Ctx() ctx: RequestContext, @Args() args: any): Promise<string | undefined> {
         if (ctx.authorizedAsOwnerOnly) {
-            // const sessionOrder = await this.activeOrderService.getOrderFromContext(ctx);
-            const sessionOrder = await this.orderService.findOneByCode(ctx, args.code);
-            if (sessionOrder) {
-                Logger.warn(`Order ${sessionOrder.id}`, loggerCtx);
-                const payments = await this.orderService.getOrderPayments(ctx, sessionOrder.id);
+            // const order = await this.activeOrderService.getOrderFromContext(ctx);
+            const order = await this.orderService.findOneByCode(ctx, args.code);
+            if (order) {
+                const payments = await this.orderService.getOrderPayments(ctx, order.id);
+                if (payments[0].state === 'Settled') {
+                    return `Payment state: ${payments[0].state}`;
+                }
                 const payment = await this.orderService.settlePayment(ctx, payments[0].id);
                 if (!isGraphQlErrorResult(payment)) {
-                    return payment.state
+                    return `Payment state: ${payment.state}`;
                 } else {
-                    return 'Error';
+                    return 'Settlement error';
                 }
             } else {
                 Logger.warn(`Order not found ${args.code}`, loggerCtx);
+                return 'Order not found';
             }
         } else {
             Logger.warn(`Not authorized as owner`, loggerCtx);
+            return 'Not authorized as owner';
         }
-        return 'Error';
     }
 }

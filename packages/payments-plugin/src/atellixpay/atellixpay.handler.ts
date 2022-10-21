@@ -1,14 +1,17 @@
 import {
     CreatePaymentResult,
     CreateRefundResult,
+    Logger,
     Injector,
     LanguageCode,
     PaymentMethodHandler,
     SettlePaymentResult,
+    SettlePaymentErrorResult,
 } from '../../../core';
 //} from '@vendure/core';
 
-import { AtxpayService } from './atellixpay.service';
+import { AtxpayService, VerifyOrderResponse } from './atellixpay.service';
+import { loggerCtx } from './constants';
 
 let atxpayService: AtxpayService;
 
@@ -33,6 +36,7 @@ export const atxpayPaymentMethodHandler = new PaymentMethodHandler({
         var amount = order.totalWithTax / 100;
         var amountStr = amount.toFixed(2);
         var orderUuid = await atxpayService.createOrder(amountStr, order.code);
+        Logger.info(`AtellixPay Created Order: ${orderUuid} Amount: ${amountStr} From Code: ${order.code}`, loggerCtx);
         return {
             amount: order.totalWithTax,
             state: 'Authorized' as const,
@@ -40,11 +44,28 @@ export const atxpayPaymentMethodHandler = new PaymentMethodHandler({
         };
     },
 
-    async settlePayment(ctx, order, payment, args): Promise<SettlePaymentResult> {
-        //const verified = await atxpayService.verfiyOrder(payment.transactionId)
-        return {
-            success: true,
-        };
+    async settlePayment(ctx, order, payment, args): Promise<SettlePaymentResult | SettlePaymentErrorResult> {
+        if (payment.state === 'Settled') {
+            return {
+                success: true,
+            };
+        }
+        const resultData = await atxpayService.verifyOrder(payment.transactionId);
+        if (resultData) {
+            Logger.info(`AtellixPay Verify Success For Order: ${payment.transactionId}`, loggerCtx);
+            return {
+                success: true,
+                metadata: {
+                    'order_sig': resultData.order_sig,
+                },
+            };
+        } else {
+            Logger.warn(`AtellixPay Verify Failed For Order: ${payment.transactionId}`, loggerCtx);
+            return {
+                state: 'Authorized',
+                success: false,
+            };
+        }
     },
 
     async createRefund(ctx, input, amount, order, payment, args): Promise<CreateRefundResult> {

@@ -1,2 +1,2 @@
-export const loggerCtx = 'StripePlugin';
-export const STRIPE_PLUGIN_OPTIONS = Symbol('STRIPE_PLUGIN_OPTIONS');
+export const loggerCtx = 'AtxpayPlugin';
+export const ATELLIXPAY_PLUGIN_OPTIONS = Symbol('ATELLIXPAY_PLUGIN_OPTIONS');

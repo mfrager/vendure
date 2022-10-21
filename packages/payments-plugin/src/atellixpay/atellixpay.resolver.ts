@@ -8,6 +8,7 @@ import {
     OrderService,
     Permission,
     RequestContext,
+    isGraphQlErrorResult,
 } from '../../../core';
 
 import { AtxpayService } from './atellixpay.service';
@@ -31,12 +32,11 @@ export class AtxpayResolver {
             if (sessionOrder) {
                 Logger.warn(`Order ${sessionOrder.id}`, loggerCtx);
                 const payments = await this.orderService.getOrderPayments(ctx, sessionOrder.id);
-                const verified = await this.atxpayService.verifyOrder(ctx, payments[0].transactionId);
-                if (verified) {
-                    this.orderService.settlePayment(ctx, payments[0].id);
-                    return 'complete';
+                const payment = await this.orderService.settlePayment(ctx, payments[0].id);
+                if (!isGraphQlErrorResult(payment)) {
+                    return payment.state
                 } else {
-                    return 'pending';
+                    return 'Error';
                 }
             } else {
                 Logger.warn(`Order not found ${args.code}`, loggerCtx);
@@ -44,6 +44,6 @@ export class AtxpayResolver {
         } else {
             Logger.warn(`Not authorized as owner`, loggerCtx);
         }
-        return 'error';
+        return 'Error';
     }
 }

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Customer, Logger, Order, RequestContext, TransactionalConnection } from '../../../core';
-//import { Customer, Logger, Order, RequestContext, TransactionalConnection } from '@vendure/core';
+import { Customer, Logger, Order, TransactionalConnection } from '../../../core';
+//import { Customer, Logger, Order, TransactionalConnection } from '@vendure/core';
 
 import { loggerCtx, ATELLIXPAY_PLUGIN_OPTIONS } from './constants';
 import { AtxpayPluginOptions } from './types';
@@ -23,7 +23,7 @@ type VerifyOrderResponse = {
 
 @Injectable()
 export class AtxpayService {
-    protected atxpay: Atxpay;
+    protected apiKey: string;
 
     constructor(
         private connection: TransactionalConnection,
@@ -32,7 +32,7 @@ export class AtxpayService {
         this.apiKey = this.options.apiKey;
     }
 
-    async createOrder(ctx: RequestContext, amount: string, orderId: string): Promise<string | undefined> {
+    async createOrder(amount: string, orderId: string): Promise<string | undefined> {
         try {
             const { data } = await axios.post<CreateOrderResponse>('https://atx2.atellix.net/api/payment_gateway/v1/order', {
                 price_total: amount,

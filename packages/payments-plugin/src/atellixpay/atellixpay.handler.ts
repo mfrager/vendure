@@ -13,9 +13,9 @@ import { AtxpayService } from './atellixpay.service';
 let atxpayService: AtxpayService;
 
 /**
- * The handler for Stripe payments.
+ * The handler for AtellixPay.
  */
-export const stripePaymentMethodHandler = new PaymentMethodHandler({
+export const atxpayPaymentMethodHandler = new PaymentMethodHandler({
     code: 'atellixpay',
 
     description: [{ languageCode: LanguageCode.en, value: 'AtellixPay' }],
@@ -23,24 +23,24 @@ export const stripePaymentMethodHandler = new PaymentMethodHandler({
     args: {},
 
     init(injector: Injector) {
-        stripeService = injector.get(StripeService);
+        atxpayService = injector.get(AtxpayService);
     },
 
     async createPayment(ctx, order, amount, args, metadata): Promise<CreatePaymentResult> {
         /*if (ctx.apiType !== 'admin') {
             throw Error(`CreatePayment is not allowed for apiType '${ctx.apiType}'`);
         }*/
-        var amount = order.totalWithTax / 100
-        amount = amount.toFixed(2)
-        var orderUuid = await atxpayService.createOrder(amount, order.code)
+        var amount = order.totalWithTax / 100;
+        var amountStr = amount.toFixed(2);
+        var orderUuid = await atxpayService.createOrder(amountStr, order.code);
         return {
             amount: order.totalWithTax,
             state: 'Authorized' as const,
-            transactionId: order_uuid,
+            transactionId: orderUuid,
         };
     },
 
-    async settlePayment(ctx, order, payment, args): SettlePaymentResult {
+    async settlePayment(ctx, order, payment, args): Promise<SettlePaymentResult> {
         //const verified = await atxpayService.verfiyOrder(payment.transactionId)
         return {
             success: true,

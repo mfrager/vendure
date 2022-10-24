@@ -3,6 +3,7 @@ import { gql } from 'graphql-tag';
 
 import { LanguageCode, PluginCommonModule, Type, VendurePlugin } from '../../../core';
 
+import { AtxpayController } from './atellixpay.controller';
 import { atxpayPaymentMethodHandler } from './atellixpay.handler';
 import { AtxpayResolver } from './atellixpay.resolver';
 import { AtxpayService } from './atellixpay.service';
@@ -11,6 +12,7 @@ import { AtxpayPluginOptions } from './types';
 
 @VendurePlugin({
     imports: [PluginCommonModule],
+    controllers: [AtxpayController],
     providers: [
         {
             provide: ATELLIXPAY_PLUGIN_OPTIONS,

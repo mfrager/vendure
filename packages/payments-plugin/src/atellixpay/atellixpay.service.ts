@@ -7,7 +7,7 @@ import { AtxpayPluginOptions } from './types';
 
 import axios from 'axios';
 
-type CreateOrderResponse = {
+export type CreateOrderResponse = {
     result: string;
     order_uuid?: string;
     checkout_url?: string;
@@ -32,7 +32,7 @@ export class AtxpayService {
         this.apiKey = this.options.apiKey;
     }
 
-    async createOrder(amount: string, orderId: string): Promise<string | undefined> {
+    async createOrder(amount: string, orderId: string): Promise<CreateOrderResponse | undefined> {
         try {
             const { data } = await axios.post<CreateOrderResponse>('https://atx2.atellix.net/api/payment_gateway/v1/order', {
                 price_total: amount,
@@ -45,7 +45,7 @@ export class AtxpayService {
                 },
             });
             if (data.result === 'ok') {
-                return data.order_uuid;
+                return data;
             } else {
                 Logger.warn(
                     `AtellixPay error: ${data.error}`,

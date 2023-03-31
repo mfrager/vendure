@@ -396,3 +396,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+packages/core/vendure-import-error.log
+packages/dev-server/migrations/*

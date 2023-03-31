@@ -92,5 +92,8 @@
       "pre-commit": "lint-staged",
       "pre-push": "yarn check-imports && yarn check-angular-versions && yarn build && yarn test && yarn e2e"
     }
+  },
+  "dependencies": {
+    "@types/express": "^4.17.14"
   }
 }

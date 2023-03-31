@@ -63,14 +63,14 @@ export const stripePaymentMethodHandler = new PaymentMethodHandler({
             };
         }
 
-        if ((result as Stripe.Refund).status === 'succeeded') {
+        if (result.status === 'succeeded') {
             return {
                 state: 'Settled' as const,
                 transactionId: payment.transactionId,
             };
         }
 
-        if ((result as Stripe.Refund).status === 'pending') {
+        if (result.status === 'pending') {
             return {
                 state: 'Pending' as const,
                 transactionId: payment.transactionId,
@@ -81,7 +81,7 @@ export const stripePaymentMethodHandler = new PaymentMethodHandler({
             state: 'Failed' as const,
             transactionId: payment.transactionId,
             metadata: {
-                message: (result as Stripe.Refund).failure_reason,
+                message: result.failure_reason,
             },
         };
     },

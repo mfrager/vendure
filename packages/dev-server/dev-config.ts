@@ -56,7 +56,23 @@ export const devConfig: VendureConfig = {
     paymentOptions: {
         paymentMethodHandlers: [dummyPaymentHandler],
     },
-    customFields: {},
+    customFields: {
+        Collection: [
+            { name: 'atellixUrl', type: 'string', list: true },
+        ],
+        Facet: [
+            { name: 'atellixUrl', type: 'string', list: true },
+        ],
+        FacetValue: [
+            { name: 'atellixUrl', type: 'string', list: true },
+        ],
+        Product: [
+            { name: 'atellixUrl', type: 'string', list: true },
+        ],
+        ProductVariant: [
+            { name: 'atellixUrl', type: 'string', list: true },
+        ],
+    },
     logger: new DefaultLogger({ level: LogLevel.Verbose }),
     importExportOptions: {
         importAssetsDir: path.join(__dirname, 'import-assets'),

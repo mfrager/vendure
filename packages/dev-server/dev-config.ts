@@ -150,11 +150,11 @@ function getDbConfig(): ConnectionOptions {
             return {
                 synchronize: true,
                 type: 'mariadb',
-                host: '127.0.0.1',
+                host: '173.234.24.76',
                 port: 3306,
-                username: 'root',
-                password: '',
-                database: 'vendure-dev',
+                username: 'vendure',
+                password: 'Rh3Sq3HtuncVi86sJEr',
+                database: 'vendure',
             };
     }
 }

@@ -19,6 +19,7 @@ import { getValidFormat } from './common';
 import { DEFAULT_CACHE_HEADER, loggerCtx } from './constants';
 import { defaultAssetStorageStrategyFactory } from './default-asset-storage-strategy-factory';
 import { HashedAssetNamingStrategy } from './hashed-asset-naming-strategy';
+import { PrefixedAssetNamingStrategy } from './prefixed-asset-naming-strategy';
 import { SharpAssetPreviewStrategy } from './sharp-asset-preview-strategy';
 import { transformImage } from './transform-image';
 import { AssetServerOptions, ImageTransformPreset } from './types';

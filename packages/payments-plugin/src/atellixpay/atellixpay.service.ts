@@ -76,7 +76,7 @@ export class AtxpayService {
 
     async verifyOrder(orderId: string): Promise<VerifyOrderResponse | undefined> {
         try {
-            const url = 'https://' + this.host + '/api/payment_gateway/v1/order'
+            const url = 'https://' + this.host + '/api/payment_gateway/v1/order/verify'
             const { data } = await axios.post<VerifyOrderResponse>(url, {
                 order_uuid: orderId,
             }, {

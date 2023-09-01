@@ -32,6 +32,7 @@ import { AtxpayPluginOptions } from './types';
         `,
         resolvers: [AtxpayResolver],
     },
+    compatibility: '^2.0.0',
 })
 export class AtxpayPlugin {
     static options: AtxpayPluginOptions;

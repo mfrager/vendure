@@ -26,6 +26,7 @@ export class AtxpayController {
         private connection: TransactionalConnection,
         private orderService: OrderService,
         private requestContextService: RequestContextService,
+        private atxpayService: AtxpayService,
     ) {}
 
     @Post('atellixpay')
@@ -39,7 +40,11 @@ export class AtxpayController {
             if (!ev) {
                 throw new Error('Invalid event');
             }
-            if (ev === 'payment_success') {
+            if (ev === 'payment_request') {
+                var orderResp = await this.atxpayService.createOrder(rqdata['amount'], rqdata['order_id']);
+                response.status(HttpStatus.OK).json(orderResp);
+                return;
+            } else if (ev === 'payment_success') {
                 let orderCode = rqdata['order_id'];
                 if (!orderCode) {
                     throw new Error('Invalid order code');

@@ -20,12 +20,15 @@ import { authorizenetPaymentMethodHandler } from './authorizenet.handler';
 import { AuthorizeNetService } from './authorizenet.service';
 import { RequestWithRawBody } from './types';
 
+import axios from 'axios';
+
 @Controller('payments')
 export class AuthorizeNetController {
     constructor(
         private connection: TransactionalConnection,
         private orderService: OrderService,
         private requestContextService: RequestContextService,
+        private authorizeNetService: AuthorizeNetService,
     ) {}
 
     @Post('authorizenet')
@@ -39,7 +42,11 @@ export class AuthorizeNetController {
             if (!ev) {
                 throw new Error('Invalid event');
             }
-            if (ev === 'payment_success') {
+            if (ev === 'payment_request') {
+                var orderResp = await this.authorizeNetService.createOrder(rqdata['amount'], rqdata['order_id']);
+                response.status(HttpStatus.OK).json(orderResp);
+                return;
+            } else if (ev === 'payment_success') {
                 let orderCode = rqdata['order_id'];
                 if (!orderCode) {
                     throw new Error('Invalid order code');
